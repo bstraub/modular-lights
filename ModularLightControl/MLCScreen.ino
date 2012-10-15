@@ -38,9 +38,16 @@ const String MODE_STRING[] = {"OFF      ", "ON       ",
                               "BLINK    ", "ALTERNATE"};
 
 
-
-void printScren(int menuContext, int menuNum)
+void initScreen()
 {
+  lcd.begin(16,2);
+  lcd.clear();
+  printScreen();
+}
+
+void printScreen()
+{
+  lcd.clear();
   lcd.home();
   switch (menuContext) {
     case 0:
@@ -227,5 +234,8 @@ void update2_3()
   lcd.print(" A");
 }
 
-
+void drawSelection()
+{
+  //!1
+}
 
