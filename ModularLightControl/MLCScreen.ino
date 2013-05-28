@@ -12,9 +12,9 @@
   *
    ***************************************************/
    
-const String LINE_0_0 = "Settings";
-const String LINE_0_1 = "Statistics";
-const String LINE_0_2 = "About";
+const String LINE_0_0 = "  Settings";
+const String LINE_0_1 = "  Statistics";
+const String LINE_0_2 = "  About";
 
 const String LINE_1_0 = " Channel 1 mode:";
 const String LINE_1_1 = " Channel 2 mode:";
@@ -33,6 +33,8 @@ const String LINE_3_2 = "SW Version 1.0";
 const String LINE_3_3 = "by Ben Straub";
 const String LINE_3_4 = "-release date-";
 const String LINE_3_5 = "";
+
+const String CURSOR = ">";
 
 const String MODE_STRING[] = {"OFF      ", "ON       ",
                               "BLINK    ", "ALTERNATE"};
@@ -58,7 +60,9 @@ void printScreen()
           print0_1(); break;
         case 2:
           print0_2(); break;
-      } break;
+      } 
+      printCursor();
+      break;
     case 1:
       switch (menuNum) {
         case 0:
@@ -138,6 +142,10 @@ void print3_4()
 { lcd.print(LINE_3_4); lcd.setCursor(0,1); lcd.print(LINE_3_5); }
 void print3_5()
 { lcd.print(LINE_3_5); lcd.setCursor(0,1); lcd.print(LINE_3_0); }
+void printCursor()
+{ if (menuCursor == 0) {lcd.setCursor(0,0);}
+  else {lcd.setCursor(0,1);}
+  lcd.print(CURSOR); }
 //end ugly boring print functions
         
         
@@ -182,9 +190,9 @@ void update1_1()
 }
 void update1_2()
 { lcd.setCursor(4,1); lcd.print("000");
-  //if (brightness >= 100) { lcd.setCursor(4,1); }
-  //else if (brightness >= 10) { lcd.setCursor(5,1); }
-  //else { lcd.setCursor(6,1); }
+  if (brightness >= 100) { lcd.setCursor(4,1); }
+  else if (brightness >= 10) { lcd.setCursor(5,1); }
+  else { lcd.setCursor(6,1); }
   lcd.print(brightness, DEC);
 }
 void update1_3()
@@ -236,6 +244,16 @@ void update2_3()
 
 void drawSelection()
 {
-  //!1
+  lcd.setCursor(0,1);
+  lcd.print(">>");
+  lcd.blink();
+}
+
+void drawDeselection()
+{
+  lcd.noBlink();
+  lcd.setCursor(0,1);
+  lcd.print("  ");
+  updateScreen();
 }
 

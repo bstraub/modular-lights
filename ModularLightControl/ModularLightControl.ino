@@ -38,10 +38,27 @@ pin lcdD6    = 11;
 pin lcdD7    = 12;
    
 LiquidCrystal lcd(lcdRS,lcdRW,lcdEN,lcdD4,lcdD5,lcdD6,lcdD7);
-char menuContext, menuNum, menuSelect;
+char menuContext, menuNum, menuSelect, menuCursor;
 int ch1Mode, ch2Mode, brightness, onTime, offTime; //settings
 int v12, v5, iCh1, iCh2;
+int settingHolder;
+int *currentSetting;
 
+//menuContext tells which menu is open.
+  // 0 is main (outermost) menu.
+  // 1 is settings
+  // 2 is statistics
+  // 3 is about
+
+//menuNum tells what line within a menu is on screen.
+  // range of 0 to MENU_OPTIONS[menuContext]
+
+//menuSelect tells if a setting or changeable option has been selected (pressed enter) within a menu.
+  //true or false
+
+//menuCursor tells whether the cursor is at the top or bottom line. Only used in menuContext = 0.
+  // 0 is top
+  // 1 is bottom
 
 
    
@@ -59,8 +76,13 @@ void setup()
 
 void loop()
 {
-  checkBtn();
-  
+  long time = millis();
+  for (int i = 0; i <= 1000; i++) {
+    checkBtn();
+  }
+  time = millis()-time;
+  Serial.print("time: ");
+  Serial.println(time);
   
   
 }
