@@ -41,7 +41,7 @@ LiquidCrystal lcd(lcdRS,lcdRW,lcdEN,lcdD4,lcdD5,lcdD6,lcdD7);
 char menuContext, menuNum, menuSelect, menuCursor;
 int ch1Mode, ch2Mode, brightness, onTime, offTime; //settings
 int v12, v5, iCh1, iCh2;
-int settingHolder;
+int settingHolder, minSetting, maxSetting;
 int *currentSetting;
 
 //menuContext tells which menu is open.

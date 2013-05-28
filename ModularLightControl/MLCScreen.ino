@@ -189,10 +189,10 @@ void update1_1()
   lcd.print(MODE_STRING[ch2Mode]);
 }
 void update1_2()
-{ lcd.setCursor(4,1); lcd.print("000");
-  if (brightness >= 100) { lcd.setCursor(4,1); }
-  else if (brightness >= 10) { lcd.setCursor(5,1); }
-  else { lcd.setCursor(6,1); }
+{ lcd.setCursor(4,1);
+  if (brightness >= 100) {  } //nothing
+  else if (brightness >= 10) { lcd.print("0"); }
+  else { lcd.print("00"); }
   lcd.print(brightness, DEC);
 }
 void update1_3()
@@ -246,12 +246,10 @@ void drawSelection()
 {
   lcd.setCursor(0,1);
   lcd.print(">>");
-  lcd.blink();
 }
 
 void drawDeselection()
 {
-  lcd.noBlink();
   lcd.setCursor(0,1);
   lcd.print("  ");
   updateScreen();

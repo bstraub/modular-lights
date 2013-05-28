@@ -17,6 +17,7 @@
 
 const int MENU_OPTIONS[] = {3,5,4,6};
 long lastHold;
+int scrollStart;
 byte btnState, prevState;
 byte enterState, backState, upState, downState; //debounced states
 byte enterRising, backRising; //rising edges
@@ -105,6 +106,7 @@ void checkEnter()
       if (menuContext == 1) //settings menu
       {
         menuSelect = true;
+        prevState = 0; //done to make sure it doesn't keep scrolling
         drawSelection();
         storeSetting();
       }
@@ -141,6 +143,8 @@ void checkBack()
 
 void checkUpDown()
 {
+  double heldTime;
+  double heldTime4;
   debounceUpDown();
   btnState = (upState << 1) | (downState);
 
@@ -186,11 +190,54 @@ void checkUpDown()
   {
     switch (btnState) {
       case 1: //down
+        if (*currentSetting != minSetting)
+        {
+          if (prevState==1) //held down
+          {
+            heldTime = (millis()-lastHold)/1000.0;
+            heldTime4 = heldTime * heldTime;
+            heldTime4 = heldTime4 * heldTime4;
+            *currentSetting = scrollStart - (int)((heldTime+heldTime4/4)+0.5);
+          } else if ((prevState&1)==0) { //0 or 2
+            *currentSetting -= 1;
+            scrollStart = *currentSetting;
+            lastHold = millis();
+          } else { //from 3 (both)
+            scrollStart = *currentSetting;
+            lastHold = millis();
+          }
+          if (*currentSetting < minSetting)
+            *currentSetting = minSetting;
+        }
         break;
+      case 2: //up
+        if (*currentSetting != maxSetting)
+        {
+          if (prevState==2) //held up
+          {
+            heldTime = (millis()-lastHold)/1000.0;
+            heldTime4 = heldTime * heldTime;
+            heldTime4 = heldTime4 * heldTime4;
+            *currentSetting = scrollStart + (int)((heldTime+heldTime4/4)+0.5);
+          } else if ((prevState&2)==0) { //0 or 1
+            *currentSetting += 1;
+            scrollStart = *currentSetting;
+            lastHold = millis();
+          } else { //from 3 (both)
+            scrollStart = *currentSetting;
+            lastHold = millis();
+          }
+          if (*currentSetting > maxSetting)
+            *currentSetting = maxSetting;
+        }
+        break;
+      case 0:
+      case 3:
+        break; //nothin to do
     }
         
-  
-  }
+  updateScreen();
+  }//end if selected
   
   prevState = btnState;
 }
@@ -227,18 +274,28 @@ void storeSetting()
   {
     case 0:
       currentSetting = &ch1Mode;
+      minSetting = 0;
+      maxSetting = 3;
       break;
     case 1:
       currentSetting = &ch2Mode;
+      minSetting = 0;
+      maxSetting = 3;
       break;
     case 2:
       currentSetting = &brightness;
+      minSetting = 0;
+      maxSetting = 255;
       break;
     case 3:
       currentSetting = &onTime;
+      minSetting = 0;
+      maxSetting = 99;
       break;
     case 4:
       currentSetting = &offTime;
+      minSetting = 0;
+      maxSetting = 99;
       break;
   }
   settingHolder = *currentSetting; 
