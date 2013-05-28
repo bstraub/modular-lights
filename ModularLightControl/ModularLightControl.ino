@@ -76,13 +76,6 @@ void setup()
 
 void loop()
 {
-  long time = millis();
-  for (int i = 0; i <= 1000; i++) {
-    checkBtn();
-  }
-  time = millis()-time;
-  Serial.print("time: ");
-  Serial.println(time);
-  
+  checkBtn();
   
 }

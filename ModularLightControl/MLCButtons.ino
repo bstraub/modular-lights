@@ -13,89 +13,137 @@
    ***************************************************/
    
 #define DEBOUNCE_COUNT 50 //tweak these
-#define HOLD_COUNT 30000   //values !4
+#define HOLD_COUNT 1000   //values !4
 
 const int MENU_OPTIONS[] = {3,5,4,6};
-long deb, hold, debEnter, debBack;
+long lastHold;
 byte btnState, prevState;
-byte enterState, backState;
+byte enterState, backState, upState, downState; //debounced states
+byte enterRising, backRising; //rising edges
 
 void initButtons()
 {
-  deb = hold = debEnter = debBack = 0;
+  lastHold = 0;
   btnState = prevState = 0;
-  enterState = backState = 0;
+  enterRising = backRising = 0;
+  enterState = backState = upState = downState= 0;
   menuContext = menuNum = menuSelect = menuCursor = 0;
 }
 
 void checkBtn()
 {
-  checkEnterBack();
+  checkEnter();
+  checkBack();
   checkUpDown();
 }
 
-void checkEnterBack()
+void debounceEnter()
 {
-  if (digitalRead(btnEnter)) {
-    if (debEnter <= 0) {
-      debEnter = DEBOUNCE_COUNT;
-      
-      if (menuContext == 0) //main menu
-      {
-        menuContext = ((menuNum + menuCursor) % 3 ) + 1; //math!
-        menuNum = 0;
-        printScreen();
-      } else if (!menuSelect) { //other menus, but not selected
-        if (menuContext == 1) //settings menu
-        {
-          menuSelect = true;
-          drawSelection();
-          storeSetting();
-        }
-        //otherwise, there's nothing to select
-      } else { //something's selected
-        menuSelect = false;
-        drawDeselection();
-      } //end context check
-      
-    } //end if debounced
-    
-  } else { //else, if not pressed
-    if (debEnter > 0) {
-      debEnter--; //decrease the debounce counter
-    }
-  } //end checking enter button
+  static int lastReading;
+  static long lastDeb;
+  
+  int reading = digitalRead(btnEnter);
+  if (reading != lastReading)
+    lastDeb = millis();
+  if ((millis()-lastDeb) > DEBOUNCE_COUNT)
+  {
+    if ((enterState != reading) && reading) //check for rising edge
+      enterRising = true;
+    enterState = reading;
+  }
+  lastReading = reading;
+}
 
-  if (digitalRead(btnBack)) {
+void debounceBack()
+{
+  static int lastReading;
+  static long lastDeb;
+  
+  
+  int reading = digitalRead(btnBack);
+  if (reading != lastReading)
+    lastDeb = millis();
+  if ((millis()-lastDeb) > DEBOUNCE_COUNT)
+  {
+    if ((backState != reading) && reading) //check for rising edge
+      backRising = true;
+    backState = reading;
+  }
+  lastReading = reading;
+}
+
+void debounceUpDown()
+{
+  static int lastReadingUp, lastReadingDown;
+  static long lastDebUp, lastDebDown;
+  
+  int readingUp = digitalRead(btnUp);
+  int readingDown = digitalRead(btnDown);
+  if (readingUp != lastReadingUp)
+    lastDebUp = millis();
+  if (readingDown != lastReadingDown)
+    lastDebDown = millis();
+  if ((millis()-lastDebUp) > DEBOUNCE_COUNT)
+    upState = readingUp;
+  if ((millis()-lastDebDown) > DEBOUNCE_COUNT)
+    downState = readingDown;
     
-    if (debBack <= 0) {
-      debBack = DEBOUNCE_COUNT;
-      
-      if ((menuContext != 0) && (!menuSelect))
+  lastReadingUp = readingUp;
+  lastReadingDown = readingDown;
+}
+
+void checkEnter()
+{
+  debounceEnter();
+  if (enterRising) {
+    if (menuContext == 0) //main menu
+    {
+      menuContext = ((menuNum + menuCursor) % 3 ) + 1; //math!
+      menuNum = 0;
+      printScreen();
+    } else if (!menuSelect) { //other menus, but not selected
+      if (menuContext == 1) //settings menu
       {
-        menuNum = (menuContext + 2 - menuCursor) % 3; //math!
-        menuContext = 0;
-        printScreen();
-      } else if (menuSelect) {
-        //go back out of selection mode without saving value
-        
-        restoreSetting();
-        drawDeselection();
-        menuSelect = false;
-      } //end context check
-    } //end debounce check
-  } else { //else if not pressed
-    if (debBack > 0) {
-      debBack--; //decrease the debounce counter
-    }
-  } //end checking back button
+        menuSelect = true;
+        drawSelection();
+        storeSetting();
+      }
+      //otherwise, there's nothing to select
+    } else { //something's selected
+      menuSelect = false;
+      drawDeselection();
+    } //end context check
+    enterRising = false; //it's been handled
+  } //end rising edge check
+}//end checkEnter()
+
+
+void checkBack()
+{
+  debounceBack();
+  if (backRising) {
+    if ((menuContext != 0) && (!menuSelect))
+    {
+      menuNum = (menuContext + 2 - menuCursor) % 3; //math!
+      menuContext = 0;
+      printScreen();
+    } else if (menuSelect) {
+      //go back out of selection mode without saving value
       
+      restoreSetting();
+      drawDeselection();
+      menuSelect = false;
+    } //end context check
+    backRising = false; //it's been handled
+  }//end rising edge check
 }
     
 
 void checkUpDown()
 {
-  btnState = (digitalRead(btnUp) << 1) | (digitalRead(btnDown));
+  debounceUpDown();
+  btnState = (upState << 1) | (downState);
+
   
   if (!menuSelect)
   {
@@ -103,53 +151,32 @@ void checkUpDown()
     switch (btnState) {
       case 1: //down
         if (prevState==1) { //held down
-          if(hold <= 0) {
+          if(millis()-lastHold > HOLD_COUNT) {
             menuDown();
-            hold = HOLD_COUNT;
-            deb = DEBOUNCE_COUNT;
-          } else {
-            hold--;
+            lastHold = millis();
           }
-        } else if (prevState==2) { //up then down
+        } else if ((prevState & 1) == 0) { //state is 0 or 2 (from nothing or just up)
             menuDown();
-            hold = HOLD_COUNT;
-            deb = DEBOUNCE_COUNT;
-        } else { //prevState == 0 or 3 //none then down, or both then just down
-          if (deb == 0){
-            menuDown();
-            hold = HOLD_COUNT;
-            deb = DEBOUNCE_COUNT;
-          }
+            lastHold = millis();
+        } else { //let go of up btn but still hold down
+            lastHold = millis(); //reset hold counter, but don't scroll
         }
         break; //end case 1
       case 2: //up
         if (prevState==2) { //held up
-          if(hold <= 0) {
+          if(millis()-lastHold > HOLD_COUNT) {
             menuUp();
-            hold = HOLD_COUNT;
-            deb = DEBOUNCE_COUNT;
-          } else {
-            hold--;
+            lastHold = millis();
           }
-        } else if (prevState==1) { //down then up
+        } else if ((prevState & 2) == 0) { //state 0 or 1 (from nothing or just down)
           menuUp();
-          hold = HOLD_COUNT;
-          deb = DEBOUNCE_COUNT;
-        } else { //prevState == 0 or 3
-          if (deb == 0){
-            menuUp();
-            hold = HOLD_COUNT;
-            deb = DEBOUNCE_COUNT;
-          }
+          lastHold = millis();
+        } else { //just let go of down btn but still hold up
+          lastHold = millis(); //reset hold counter, but don't scroll
         }
         break; //end case 2
       case 0:
       case 3:
-        if (deb > 0)
-          deb--;
-        if ((prevState == 1) || (prevState == 2)) {
-          hold = 0;
-        }
         break; //end case 0 + 3
     } //end switch(btnState)
   
