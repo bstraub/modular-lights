@@ -114,6 +114,7 @@ void checkEnter()
     } else { //something's selected
       menuSelect = false;
       saveSetting();
+      updateHBSettings();
       drawDeselection();
     } //end context check
     enterRising = false; //it's been handled

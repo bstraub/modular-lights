@@ -28,7 +28,7 @@ typedef const byte pin;
 pin btnUp    = 7;  ///placeholder
 pin btnDown  = 8;  ///pin numbers
 pin btnEnter = 6;  // make sure to
-pin btnBack  = 5;  // set correctly !2
+pin btnBack  = 13; // set correctly 
 
 pin lcdRS    = 2;
 pin lcdRW    = 3;
@@ -37,6 +37,10 @@ pin lcdD4    = 9;
 pin lcdD5    = 10;
 pin lcdD6    = 11;
 pin lcdD7    = 12;
+
+pin hbEN     = 5; //must be PWM-able
+pin hb1      = A0;
+pin hb2      = A1;
    
 LiquidCrystal lcd(lcdRS,lcdRW,lcdEN,lcdD4,lcdD5,lcdD6,lcdD7);
 char menuContext, menuNum, menuSelect, menuCursor;
@@ -70,12 +74,13 @@ void setup()
   initButtons();
   initScreen();
   loadSettings();
-  //initialize h-bridge !1
+  initHBridge();
 
 }
 
 void loop()
 {
   checkBtn();
+  updateHB();
   
 }

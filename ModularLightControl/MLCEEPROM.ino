@@ -1,3 +1,16 @@
+/* **************************************************
+  *  MLCEEPROM.ino
+  *   Part of the ModularLightControl sketch.
+  *
+  *  Author:  Ben Straub
+  *  Revision: 0.0
+  *  Date: --
+  *
+  *  Description:  This handles the  reads and writes
+  *     to EEPROM.
+  *     
+   ***************************************************/
+
 const int settingAddr[6] = {0, 2, 4, 6, 8};
 
 void saveSetting()
