@@ -15,6 +15,7 @@
    ***********************************************************/
 
 #include <LiquidCrystal.h>
+#include <EEPROM.h>
 
 //settings
 #define MODE_OFF 0
@@ -68,9 +69,8 @@ void setup()
   Serial.println("go");
   initButtons();
   initScreen();
-
+  loadSettings();
   //initialize h-bridge !1
-  //init (!1) / load (!3) settings
 
 }
 

@@ -113,6 +113,7 @@ void checkEnter()
       //otherwise, there's nothing to select
     } else { //something's selected
       menuSelect = false;
+      saveSetting();
       drawDeselection();
     } //end context check
     enterRising = false; //it's been handled
@@ -306,9 +307,5 @@ void restoreSetting()
   *currentSetting = settingHolder;
 }
 
-void saveSetting()
-{
-  //!3 save setting into EEPROM
-}
 
       
