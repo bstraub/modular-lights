@@ -52,7 +52,7 @@ void updateBrightness()
      || ((blinkFlag==2)&&(ts2==onFlop)))
     analogWrite(hbEN, 255-brightness);
   else
-    analogWrite(hbEn, (255-(brightness/2));
+    analogWrite(hbEN, (255-(brightness/2)));
     
 }
 

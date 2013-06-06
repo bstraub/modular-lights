@@ -25,20 +25,20 @@
    
 typedef const byte pin;
 
-pin btnUp    = 7;  ///placeholder
-pin btnDown  = 8;  ///pin numbers
-pin btnEnter = 6;  // make sure to
+pin btnUp    = 11;//7;  ///placeholder
+pin btnDown  = 10;//8;  ///pin numbers
+pin btnEnter = 12;//6;  // make sure to
 pin btnBack  = 13; // set correctly 
 
 pin lcdRS    = 2;
 pin lcdRW    = 3;
 pin lcdEN    = 4;
-pin lcdD4    = 9;
-pin lcdD5    = 10;
-pin lcdD6    = 11;
-pin lcdD7    = 12;
+pin lcdD4    = 8;//9;
+pin lcdD5    = 7;//10;
+pin lcdD6    = 6;//11;
+pin lcdD7    = 5;//12;
 
-pin hbEN     = 5; //must be PWM-able
+pin hbEN     = 9;//5; //must be PWM-able
 pin hb1      = A0;
 pin hb2      = A1;
 
