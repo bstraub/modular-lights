@@ -2,8 +2,8 @@
   *  ModularLightControl.ino
   *
   *  Author:  Ben Straub
-  *  Revision: 0.0
-  *  Date: --
+  *  Revision: 1.0
+  *  Date: 06/06/13
   *
   *  Description:  This is the main file for the modular light
   *     controller.  This controller will drive an LCD display
@@ -41,6 +41,12 @@ pin lcdD7    = 12;
 pin hbEN     = 5; //must be PWM-able
 pin hb1      = A0;
 pin hb2      = A1;
+
+pin stat12V  = A2; //12V rail
+pin stat5V   = A3; // 5V rail
+pin statIA   = A4; //Ch A current
+pin statIB   = A5; //Ch B current
+
    
 LiquidCrystal lcd(lcdRS,lcdRW,lcdEN,lcdD4,lcdD5,lcdD6,lcdD7);
 char menuContext, menuNum, menuSelect, menuCursor;

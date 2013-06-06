@@ -3,8 +3,8 @@
   *   Part of the ModularLightControl sketch.
   *
   *  Author:  Ben Straub
-  *  Revision: 0.0
-  *  Date: 10/11/12
+  *  Revision: 1.0
+  *  Date: 06/06/13
   *
   *  Description:  This handles all  the screen stuff,
   *     like displaying the appropriate things for the
@@ -31,7 +31,7 @@ const String LINE_3_0 = "Modular Light";
 const String LINE_3_1 = "Controller";
 const String LINE_3_2 = "SW Version 1.0";
 const String LINE_3_3 = "by Ben Straub";
-const String LINE_3_4 = "-release date-";
+const String LINE_3_4 = "-JUN 6, 2013-";
 const String LINE_3_5 = "";
 
 const String CURSOR = ">";
@@ -117,7 +117,7 @@ void print1_0()
 void print1_1()
 { lcd.print(LINE_1_1); update1_1(); }
 void print1_2()
-{ lcd.print(LINE_1_2); update1_2(); lcd.print(" / 255"); }
+{ lcd.print(LINE_1_2); update1_2(); lcd.print(" / 254"); }
 void print1_3()
 { lcd.print(LINE_1_3); update1_3(); }
 void print1_4()
@@ -245,7 +245,8 @@ void update2_3()
 void drawSelection()
 {
   lcd.setCursor(0,1);
-  lcd.print(">>");
+  lcd.print(CURSOR);
+  lcd.print(CURSOR);
 }
 
 void drawDeselection()

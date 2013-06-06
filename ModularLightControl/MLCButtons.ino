@@ -3,8 +3,8 @@
   *   Part of the ModularLightControl sketch.
   *
   *  Author:  Ben Straub
-  *  Revision: 0.0
-  *  Date: --
+  *  Revision: 1.0
+  *  Date: 06/06/13
   *
   *  Description:  This  handles  all  of  the  button
   *     presses,  and  calls screen update  functions.
@@ -287,7 +287,7 @@ void storeSetting()
     case 2:
       currentSetting = &brightness;
       minSetting = 0;
-      maxSetting = 255;
+      maxSetting = 254;
       break;
     case 3:
       currentSetting = &onTime;

@@ -3,8 +3,8 @@
   *   Part of the ModularLightControl sketch.
   *
   *  Author:  Ben Straub
-  *  Revision: 0.0
-  *  Date: --
+  *  Revision: 1.0
+  *  Date: 06/06/13
   *
   *  Description:  This handles the  reads and writes
   *     to EEPROM.
