@@ -12,8 +12,8 @@
   *
    ***************************************************/
    
-#define DEBOUNCE_COUNT 50 //tweak these
-#define HOLD_COUNT 1000   //values !4
+#define DEBOUNCE_COUNT 50 
+#define HOLD_COUNT 1000   
 
 const int MENU_OPTIONS[] = {3,5,4,6};
 long lastHold;

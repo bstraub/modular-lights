@@ -13,7 +13,7 @@
   *     that  the   settings  change,   and  updateHB()
   *     should be called continually.
   *
-   ***************************************************/
+   ***************************************************/   
 enum timingState {
   off,
   on1,
@@ -25,7 +25,6 @@ byte doubleFlag; // 0 = no double-on states, 1 = cycle contains double-on state 
 byte blinkFlag; // 0 = no blink, 1 = blink (on time), 2 = blink (off time)
 timingState ts1, ts2; //for the two blinking states
 timingState hbState; //the h-bridge state (won't use onFlop)
-
 long blink1, blink2; //blink timers
 int  ton, toff; //values actually used, in ms
 byte mode;
@@ -252,6 +251,7 @@ void HBOn1()
   digitalWrite(hb2, LOW);
   digitalWrite(hb1, HIGH);
   hbState = on1;
+  changeTime = micros();
 }
 
 void HBOn2()
@@ -259,6 +259,7 @@ void HBOn2()
   digitalWrite(hb1, LOW);
   digitalWrite(hb2, HIGH);
   hbState = on2;
+  changeTime = micros();
 }
 
 void HBOff()
@@ -266,16 +267,15 @@ void HBOff()
   digitalWrite(hb1, LOW);
   digitalWrite(hb2, LOW);
   hbState = off;
+  changeTime = micros();
 }
 
 void HBFlop()
 {
-  static byte flop = 0;
-  
-  if (flop==0)
-    HBOn1();
-  else if (flop==5)
-    HBOn2();
-  
-  flop = (flop+1)%10;
+  if ((micros() - changeTime) >= FLOP_TIME) {
+    if ((hbState) != on1)
+      HBOn1();
+    else
+      HBOn2();
+  }
 }
